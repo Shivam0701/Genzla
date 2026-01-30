@@ -1,5 +1,5 @@
 const express = require("express");
-const { sendContactEmail } = require("../utils/email");
+const { sendContactEmail } = require("../utils/email-reliable");
 
 const router = express.Router();
 

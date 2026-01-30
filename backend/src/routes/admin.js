@@ -2,11 +2,36 @@ const express = require("express");
 const User = require("../models/User");
 const CustomizationRequest = require("../models/CustomizationRequest");
 const { adminAuth } = require("../middleware/auth");
+const { upload } = require("../utils/cloudinary");
 
 const router = express.Router();
 
 // All admin routes require admin authentication
 router.use(adminAuth);
+
+// Image upload endpoint
+router.post("/upload-image", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file provided",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Image uploaded successfully",
+      imageUrl: req.file.path,
+    });
+  } catch (error) {
+    console.error("Image upload error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to upload image",
+    });
+  }
+});
 
 router.get("/users", async (req, res) => {
   try {

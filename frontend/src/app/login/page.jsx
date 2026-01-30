@@ -11,10 +11,9 @@ import styles from "./login.module.scss";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     email: "",
-    otp: "",
+    password: "",
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,55 +24,18 @@ export default function LoginPage() {
     setError("");
   };
 
-  const handleSendOTP = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/send-otp`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setStep(2);
-        // Auto-fill OTP if provided (for test emails)
-        if (data.developmentOTP) {
-          setFormData(prev => ({ ...prev, otp: data.developmentOTP }));
-          setError(`✅ ${data.message}`);
-        }
-      } else {
-        setError(data.message || "Failed to send OTP");
-      }
-    } catch (error) {
-      setError("Network error. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleVerifyOTP = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError("");
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-otp`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            email: formData.email, 
-            otp: formData.otp
-          }),
+          body: JSON.stringify(formData),
         }
       );
 
@@ -88,7 +50,7 @@ export default function LoginPage() {
           router.push("/dashboard");
         }
       } else {
-        setError(data.message || "Invalid OTP");
+        setError(data.message || "Login failed");
       }
     } catch (error) {
       setError("Network error. Please try again.");
@@ -109,59 +71,43 @@ export default function LoginPage() {
         >
           <h1 className={styles.title}>Login</h1>
 
-          {step === 1 && (
-            <form onSubmit={handleSendOTP} className={styles.form}>
-              <div className={styles.formGroup}>
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className={styles.input}
-                />
-              </div>
-              {error && <div className={styles.error}>{error}</div>}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={styles.submitButton}
-              >
-                {isSubmitting ? "Sending..." : "Send OTP"}
-              </button>
-            </form>
-          )}
-
-          {step === 2 && (
-            <form onSubmit={handleVerifyOTP} className={styles.form}>
-              <p className={styles.info}>
-                OTP sent to {formData.email}. Please check your inbox.
-              </p>
-              <div className={styles.formGroup}>
-                <label htmlFor="otp">OTP</label>
-                <input
-                  type="text"
-                  id="otp"
-                  name="otp"
-                  value={formData.otp}
-                  onChange={handleChange}
-                  required
-                  maxLength={6}
-                  className={styles.input}
-                />
-              </div>
-              {error && <div className={styles.error}>{error}</div>}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={styles.submitButton}
-              >
-                {isSubmitting ? "Logging in..." : "Login"}
-              </button>
-            </form>
-          )}
+          <form onSubmit={handleLogin} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className={styles.input}
+              />
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className={styles.input}
+              />
+            </div>
+            
+            {error && <div className={styles.error}>{error}</div>}
+            
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={styles.submitButton}
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
+            </button>
+          </form>
 
           <GoogleAuth mode="login" />
 

@@ -125,6 +125,56 @@ export default function EditProduct() {
     }));
   };
 
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    setSaving(true);
+    try {
+      const uploadedImages = [];
+      
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const token = localStorage.getItem("genzla-token");
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://genzla.onrender.com";
+        
+        const response = await fetch(`${API_URL}/api/admin/upload-image`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          uploadedImages.push(data.imageUrl);
+        } else {
+          console.error('Failed to upload image:', file.name);
+        }
+      }
+      
+      setProduct(prev => ({
+        ...prev,
+        images: [...(prev.images || []), ...uploadedImages]
+      }));
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const removeImage = (index) => {
+    setProduct(prev => ({
+      ...prev,
+      images: (prev.images || []).filter((_, i) => i !== index)
+    }));
+  };
+
   if (loading) {
     return (
       <div className={styles.pageWrapper} data-theme={theme}>
@@ -191,11 +241,12 @@ export default function EditProduct() {
                 <option value="">Select a category</option>
                 <option value="Jacket">Jacket</option>
                 <option value="T-shirt">T-shirt</option>
+                <option value="Shirt">Shirt</option>
                 <option value="Hoodie">Hoodie</option>
                 <option value="Jeans">Jeans</option>
-                <option value="Bag">Bag</option>
-                <option value="Shoes">Shoes</option>
-                <option value="Accessories">Accessories</option>
+                <option value="Baggy Pants">Baggy Pants</option>
+                <option value="Bags">Bags</option>
+                <option value="Shoe">Shoe</option>
               </select>
             </div>
 
@@ -212,17 +263,51 @@ export default function EditProduct() {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="price">Price (Optional)</label>
+              <label htmlFor="price">Price (Optional) - ₹</label>
               <input
-                type="number"
+                type="text"
                 id="price"
                 name="price"
                 value={product.price}
                 onChange={handleChange}
-                min="0"
-                step="0.01"
                 className={styles.input}
+                placeholder="e.g., ₹999, Contact for Price, Custom Quote"
               />
+              <small className={styles.fieldNote}>
+                You can enter numbers (₹999) or text (Contact for Price, Custom Quote, etc.)
+              </small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="images">Product Images</label>
+              <input
+                type="file"
+                id="images"
+                name="images"
+                multiple
+                accept="image/*"
+                onChange={handleImageUpload}
+                className={styles.fileInput}
+              />
+              <small className={styles.fieldNote}>
+                Upload multiple images (JPG, PNG, WebP). First image will be the main image.
+              </small>
+              {product.images && product.images.length > 0 && (
+                <div className={styles.imagePreview}>
+                  {product.images.map((image, index) => (
+                    <div key={index} className={styles.imageItem}>
+                      <img src={image} alt={`Product ${index + 1}`} />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className={styles.removeImage}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className={styles.formActions}>

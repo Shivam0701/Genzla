@@ -669,12 +669,16 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--background-color);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+}
+
+[data-theme="dark"] .modalOverlay {
+  background: var(--background-color);
 }
 
 .modal {
@@ -685,6 +689,11 @@
   width: 100%;
   border: 1px solid var(--border-color);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .modal {
+  background: var(--card-background);
+  border-color: var(--border-color);
 }
 
 .modal h3 {

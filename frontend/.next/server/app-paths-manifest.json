@@ -1,7 +1,10 @@
 {
   "/page": "app/page.js",
-  "/login/page": "app/login/page.js",
-  "/admin/products/[id]/edit/page": "app/admin/products/[id]/edit/page.js",
   "/admin/dashboard/page": "app/admin/dashboard/page.js",
-  "/customization/page": "app/customization/page.js"
+  "/login/page": "app/login/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/products/page": "app/products/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/customization/page": "app/customization/page.js",
+  "/admin/products/new/page": "app/admin/products/new/page.js"
 }

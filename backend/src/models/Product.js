@@ -16,11 +16,14 @@ const productSchema = new mongoose.Schema(
         "Jeans",
         "Baggy Pants",
         "Bags",
+        "Hoodie",
+        "Shoe",
       ],
       required: true,
     },
     price: {
-      type: Number,
+      type: String, // Changed to String to allow text like "Contact for Price"
+      required: false, // Made optional
     },
     description: {
       type: String,

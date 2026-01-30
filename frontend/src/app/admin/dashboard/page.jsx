@@ -636,7 +636,7 @@ export default function AdminDashboard() {
                             {product.description?.substring(0, 100)}...
                           </p>
                           {product.price && (
-                            <div className={styles.productPrice}>${product.price}</div>
+                            <div className={styles.productPrice}>₹{product.price}</div>
                           )}
                           <div className={styles.productActions}>
                             <Link

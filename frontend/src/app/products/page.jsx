@@ -51,7 +51,7 @@ export default function ProductsPage() {
     }
   };
 
-  const categories = ["all", "Jacket", "T-shirt", "Shirt", "Jeans", "Baggy Pants", "Bags"];
+  const categories = ["all", "Jacket", "T-shirt", "Shirt", "Hoodie", "Jeans","Shoe", "Baggy Pants", "Bags"];
   
   // Ensure products is always an array
   const safeProducts = Array.isArray(products) ? products : [];
@@ -150,7 +150,7 @@ export default function ProductsPage() {
                   <div className={styles.category}>{product.category}</div>
                   <h3 className={styles.productName}>{product.name}</h3>
                   {product.price && (
-                    <div className={styles.price}>${product.price}</div>
+                    <div className={styles.price}>₹{product.price}</div>
                   )}
                 </div>
               </motion.article>
@@ -207,7 +207,7 @@ export default function ProductsPage() {
                     
                     {selectedProduct.price && (
                       <div className={styles.modalPrice}>
-                        ${selectedProduct.price}
+                        ₹{selectedProduct.price}
                       </div>
                     )}
                     

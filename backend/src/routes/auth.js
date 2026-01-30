@@ -42,13 +42,99 @@ const isValidEmail = (email) => {
 };
 
 /**
+ * @route   POST /api/auth/login
+ * @desc    Login with email and password
+ * @access  Public
+ */
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a valid email address",
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Find user
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    if (!user.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Account not verified. Please complete signup first.",
+      });
+    }
+
+    if (!user.password) {
+      return res.status(400).json({
+        success: false,
+        message: "No password set for this account. Please use forgot password to set a password.",
+      });
+    }
+
+    // Verify password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // Generate JWT token
+    const token = generateToken(user._id);
+
+    // Return success response
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        isVerified: user.isVerified,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again.",
+    });
+  }
+});
+
+/**
  * @route   POST /api/auth/send-otp
- * @desc    Send OTP for authentication (signup/login)
+ * @desc    Send OTP for signup only (not for login)
  * @access  Public
  */
 router.post("/send-otp", otpLimiter, async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, purpose = 'signup' } = req.body;
 
     if (!email) {
       return res.status(400).json({
@@ -65,15 +151,40 @@ router.post("/send-otp", otpLimiter, async (req, res) => {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-
-    // Find or create user
     let user = await User.findOne({ email: normalizedEmail });
-    
-    if (!user) {
-      user = new User({
-        email: normalizedEmail,
-        isVerified: false,
-      });
+
+    // Handle different purposes
+    if (purpose === 'signup') {
+      // For signup - user should not exist or should not be verified
+      if (user && user.isVerified) {
+        return res.status(400).json({
+          success: false,
+          message: "Account already exists. Please use login with password.",
+        });
+      }
+
+      // Create user if doesn't exist
+      if (!user) {
+        user = new User({
+          email: normalizedEmail,
+          isVerified: false,
+        });
+      }
+    } else if (purpose === 'forgot-password') {
+      // For forgot password - user must exist and be verified
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: "No account found with this email address",
+        });
+      }
+
+      if (!user.isVerified) {
+        return res.status(400).json({
+          success: false,
+          message: "Account not verified. Please complete verification first",
+        });
+      }
     }
 
     // Generate and save OTP
@@ -92,69 +203,42 @@ router.post("/send-otp", otpLimiter, async (req, res) => {
       return res.json({
         success: true,
         message: `Test mode - Your OTP is: ${otp}`,
-        isNewUser: !user.isVerified,
         developmentOTP: otp,
         testMode: true,
       });
     }
 
-    // Admin email - show OTP if email fails
-    if (normalizedEmail === 'store.genzla@gmail.com') {
-      try {
-        const emailResult = await sendOTP(normalizedEmail, otp);
-        if (emailResult.fallbackMode) {
-          return res.json({
-            success: true,
-            message: `Admin fallback - Your OTP is: ${otp}`,
-            isNewUser: !user.isVerified,
-            developmentOTP: otp,
-            emailFallback: true,
-          });
-        } else {
-          return res.json({
-            success: true,
-            message: "OTP sent to your email",
-            isNewUser: !user.isVerified,
-          });
-        }
-      } catch (emailError) {
-        return res.json({
-          success: true,
-          message: `Admin fallback - Your OTP is: ${otp}`,
-          isNewUser: !user.isVerified,
-          developmentOTP: otp,
-          emailFallback: true,
-        });
-      }
-    }
-
-    // Regular emails - try to send, fallback to error
+    // For ALL production emails - must send via email, no fallbacks
     try {
-      const emailResult = await sendOTP(normalizedEmail, otp);
+      const emailResult = await sendOTP(normalizedEmail, otp, purpose === 'forgot-password' ? 'password reset' : 'signup');
+      
       if (emailResult.testMode) {
         return res.json({
           success: true,
-          message: `Test mode - Your OTP is: ${emailResult.otp}`,
-          isNewUser: !user.isVerified,
+          message: emailResult.message,
           developmentOTP: emailResult.otp,
           testMode: true,
         });
       } else {
         return res.json({
           success: true,
-          message: "OTP sent successfully to your email",
-          isNewUser: !user.isVerified,
+          message: purpose === 'forgot-password' ? 
+            "Password reset OTP sent to your email" : 
+            "OTP sent successfully to your email",
         });
       }
     } catch (emailError) {
+      console.error("Email sending failed:", emailError.message);
+      
+      // Clear the OTP since email failed
       user.clearOTP();
       await user.save();
       
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
-        message: "Email service temporarily unavailable. Please try test@genzla.com for testing.",
+        message: "Email service is currently unavailable. Please try again later or use test@genzla.com for testing.",
         emailError: true,
-        suggestion: "Use test@genzla.com for immediate access",
+        suggestion: "Try again in a few minutes or contact support if the issue persists.",
       });
     }
   } catch (error) {
@@ -168,12 +252,12 @@ router.post("/send-otp", otpLimiter, async (req, res) => {
 
 /**
  * @route   POST /api/auth/verify-otp
- * @desc    Verify OTP and complete authentication
+ * @desc    Verify OTP for signup or password reset
  * @access  Public
  */
 router.post("/verify-otp", verifyLimiter, async (req, res) => {
   try {
-    const { email, otp, name, phone } = req.body;
+    const { email, otp, name, phone, password, purpose = 'signup' } = req.body;
 
     // Validation
     if (!email || !otp) {
@@ -217,12 +301,12 @@ router.post("/verify-otp", verifyLimiter, async (req, res) => {
       });
     }
 
-    // Check if this is a new user (signup) and validate required fields
-    if (!user.isVerified) {
-      if (!name || !phone) {
+    if (purpose === 'signup') {
+      // Handle signup verification
+      if (!name || !phone || !password) {
         return res.status(400).json({
           success: false,
-          message: "Name and phone number are required for new users",
+          message: "Name, phone number, and password are required for signup",
         });
       }
 
@@ -232,6 +316,14 @@ router.post("/verify-otp", verifyLimiter, async (req, res) => {
         return res.status(400).json({
           success: false,
           message: "Please provide a valid phone number",
+        });
+      }
+
+      // Validate password
+      if (password.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: "Password must be at least 6 characters long",
         });
       }
 
@@ -251,31 +343,44 @@ router.post("/verify-otp", verifyLimiter, async (req, res) => {
       // Update user for new signup
       user.name = name.trim();
       user.phone = phone.trim();
+      user.password = password;
       user.isVerified = true;
+
+      // Clear OTP and save
+      user.clearOTP();
+      await user.save();
+
+      // Generate JWT token
+      const token = generateToken(user._id);
+
+      // Return success response
+      res.json({
+        success: true,
+        message: "Account created successfully",
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          isVerified: user.isVerified,
+          avatar: user.avatar,
+        },
+      });
+
+    } else if (purpose === 'forgot-password') {
+      // Handle password reset verification - just verify OTP, don't login
+      user.clearOTP();
+      await user.save();
+
+      res.json({
+        success: true,
+        message: "OTP verified successfully. You can now set a new password.",
+        verified: true,
+      });
     }
 
-    // Clear OTP and save
-    user.clearOTP();
-    await user.save();
-
-    // Generate JWT token
-    const token = generateToken(user._id);
-
-    // Return success response
-    res.json({
-      success: true,
-      message: user.isVerified ? "Login successful" : "Account created successfully",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        isVerified: user.isVerified,
-        avatar: user.avatar,
-      },
-    });
   } catch (error) {
     console.error("Verify OTP error:", error);
     
@@ -325,17 +430,16 @@ router.post("/resend-otp", otpLimiter, async (req, res) => {
     const otp = user.generateOTP();
     await user.save();
 
-    // Send OTP email
+    // Send OTP email - must succeed for security
     try {
       const emailResult = await sendOTP(normalizedEmail, otp);
       
-      if (emailResult.testMode || emailResult.fallbackMode) {
+      if (emailResult.testMode) {
         return res.json({
           success: true,
-          message: `OTP resent - Your OTP is: ${emailResult.otp || otp}`,
-          developmentOTP: emailResult.otp || otp,
-          testMode: emailResult.testMode,
-          emailFallback: emailResult.fallbackMode,
+          message: emailResult.message,
+          developmentOTP: emailResult.otp,
+          testMode: true,
         });
       } else {
         return res.json({
@@ -346,12 +450,14 @@ router.post("/resend-otp", otpLimiter, async (req, res) => {
     } catch (emailError) {
       console.error("Email sending error:", emailError);
       
+      // Clear OTP and return error
       user.clearOTP();
       await user.save();
       
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
-        message: "Failed to send OTP email. Please try again.",
+        message: "Email service is currently unavailable. Please try again later.",
+        emailError: true,
       });
     }
   } catch (error) {
@@ -522,17 +628,33 @@ router.post("/forgot-password", otpLimiter, async (req, res) => {
     const otp = user.generateOTP();
     await user.save();
 
-    // Send OTP email
+    // Test emails - show OTP directly
+    const testEmails = [
+      'test@example.com',
+      'test@genzla.com', 
+      'demo@genzla.com',
+      'admin@test.com'
+    ];
+    
+    if (testEmails.includes(normalizedEmail)) {
+      return res.json({
+        success: true,
+        message: `Test mode - Your password reset OTP is: ${otp}`,
+        developmentOTP: otp,
+        testMode: true,
+      });
+    }
+
+    // Send OTP email - must succeed for security
     try {
       const emailResult = await sendOTP(normalizedEmail, otp, "password reset");
       
-      if (emailResult.testMode || emailResult.fallbackMode) {
+      if (emailResult.testMode) {
         return res.json({
           success: true,
-          message: `Password reset OTP - Your OTP is: ${emailResult.otp || otp}`,
-          developmentOTP: emailResult.otp || otp,
-          testMode: emailResult.testMode,
-          emailFallback: emailResult.fallbackMode,
+          message: emailResult.message,
+          developmentOTP: emailResult.otp,
+          testMode: true,
         });
       } else {
         return res.json({
@@ -543,12 +665,14 @@ router.post("/forgot-password", otpLimiter, async (req, res) => {
     } catch (emailError) {
       console.error("Email sending error:", emailError);
       
+      // Clear OTP and return error
       user.clearOTP();
       await user.save();
       
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
-        message: "Failed to send password reset email. Please try again.",
+        message: "Email service is currently unavailable. Please try again later.",
+        emailError: true,
       });
     }
   } catch (error) {

@@ -17,6 +17,8 @@ export default function SignupPage() {
     otp: "",
     name: "",
     phone: "",
+    password: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +40,10 @@ export default function SignupPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email }),
+          body: JSON.stringify({ 
+            email: formData.email,
+            purpose: 'signup'
+          }),
         }
       );
 
@@ -79,6 +84,24 @@ export default function SignupPage() {
       return;
     }
 
+    if (!formData.password) {
+      setError("Password is required");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setIsSubmitting(false);
+      return;
+    }
+
     // Validate phone number format
     const phoneRegex = /^[+]?[\d\s\-\(\)]{10,15}$/;
     if (!phoneRegex.test(formData.phone.trim())) {
@@ -97,7 +120,9 @@ export default function SignupPage() {
             email: formData.email, 
             otp: formData.otp,
             name: formData.name.trim(),
-            phone: formData.phone.trim()
+            phone: formData.phone.trim(),
+            password: formData.password,
+            purpose: 'signup'
           }),
         }
       );
@@ -186,6 +211,34 @@ export default function SignupPage() {
                   required
                   className={styles.input}
                   placeholder="Enter your phone number"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className={styles.input}
+                  placeholder="Enter password (min 6 characters)"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  className={styles.input}
+                  placeholder="Confirm your password"
                 />
               </div>
 

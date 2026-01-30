@@ -45,14 +45,14 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", adminAuth, async (req, res) => {
   try {
-    const { name, category, price, description, availableCustomizations } = req.body;
+    const { name, category, price, description, availableCustomizations, images } = req.body;
 
     const product = new Product({
       name,
       category,
-      price: price ? parseFloat(price) : undefined,
+      price: price || undefined, // Allow empty price
       description,
-      images: [],
+      images: images || [], // Handle images array
       availableCustomizations: availableCustomizations || [],
     });
 
@@ -73,7 +73,7 @@ router.post("/", adminAuth, async (req, res) => {
 
 router.put("/:id", adminAuth, async (req, res) => {
   try {
-    const { name, category, price, description, availableCustomizations } = req.body;
+    const { name, category, price, description, availableCustomizations, images } = req.body;
 
     const product = await Product.findById(req.params.id);
 
@@ -87,8 +87,9 @@ router.put("/:id", adminAuth, async (req, res) => {
     if (name) product.name = name;
     if (category) product.category = category;
     if (description) product.description = description;
-    if (price !== undefined) product.price = parseFloat(price);
+    if (price !== undefined) product.price = price; // Allow empty string or text
     if (availableCustomizations) product.availableCustomizations = availableCustomizations;
+    if (images !== undefined) product.images = images; // Handle images array
 
     await product.save();
     res.json({

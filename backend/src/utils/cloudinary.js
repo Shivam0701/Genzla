@@ -11,11 +11,19 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "genzla",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    folder: "genzla/products",
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "gif"],
+    transformation: [
+      { width: 800, height: 800, crop: "limit", quality: "auto" }
+    ],
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
 
 module.exports = { cloudinary, upload };
