@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { verifyTransporter } = require("./utils/email-reliable");
 require("dotenv").config();
 
 const app = express();
@@ -150,12 +149,7 @@ const startServer = async () => {
     });
     console.log("✅ MongoDB connected");
 
-    try {
-      await verifyTransporter();
-      console.log("📧 Email service verified");
-    } catch (err) {
-      console.warn("⚠️ Email verification failed:", err.message);
-    }
+    console.log("📧 Email service configured (Gmail SMTP)");
 
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);

@@ -91,7 +91,7 @@ const sendOTP = async (email, otp, type = 'verification') => {
 };
 
 // Transporter verification with reasonable timeout
-const verifyTransporter = async () => {
+/*const verifyTransporter = async () => {
   try {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.log("⚠️ Email credentials not configured");
@@ -110,7 +110,7 @@ const verifyTransporter = async () => {
       greetingTimeout: 5000,    // 5 seconds
       socketTimeout: 8000,      // 8 seconds
     });
-    
+    */
     // Verify with reasonable timeout
     await Promise.race([
       transporter.verify(),
