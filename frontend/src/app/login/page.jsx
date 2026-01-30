@@ -17,11 +17,16 @@ export default function LoginPage() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleLogin = async (e) => {
@@ -87,15 +92,50 @@ export default function LoginPage() {
             
             <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className={styles.input}
-              />
+              <div className={styles.passwordWrapper}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className={styles.input}
+                />
+                <motion.button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className={styles.eyeButton}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  animate={{ 
+                    rotate: showPassword ? 0 : 15,
+                    scale: showPassword ? 1.1 : 1 
+                  }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  <motion.span
+                    className={styles.eyeIcon}
+                    animate={{
+                      opacity: showPassword ? 1 : 0.7,
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </motion.span>
+                  <motion.span
+                    className={styles.eyeText}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ 
+                      opacity: showPassword ? 1 : 0,
+                      y: showPassword ? 0 : 10 
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {showPassword ? "Oops! Hide it!" : ""}
+                  </motion.span>
+                </motion.button>
+              </div>
             </div>
             
             {error && <div className={styles.error}>{error}</div>}

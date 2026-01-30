@@ -19,11 +19,21 @@ export default function ForgotPasswordPage() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const handleSendOTP = async (e) => {
@@ -162,30 +172,100 @@ export default function ForgotPasswordPage() {
               </div>
               <div className={styles.formGroup}>
                 <label htmlFor="newPassword">New Password</label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  required
-                  minLength={6}
-                  className={styles.input}
-                  placeholder="Enter new password"
-                />
+                <div className={styles.passwordWrapper}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="newPassword"
+                    name="newPassword"
+                    value={formData.newPassword}
+                    onChange={handleChange}
+                    required
+                    minLength={6}
+                    className={styles.input}
+                    placeholder="Enter new password"
+                  />
+                  <motion.button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className={styles.eyeButton}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    animate={{ 
+                      rotate: showPassword ? 0 : 15,
+                      scale: showPassword ? 1.1 : 1 
+                    }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <motion.span
+                      className={styles.eyeIcon}
+                      animate={{
+                        opacity: showPassword ? 1 : 0.7,
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {showPassword ? "🔒" : "🔓"}
+                    </motion.span>
+                    <motion.span
+                      className={styles.eyeText}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ 
+                        opacity: showPassword ? 1 : 0,
+                        y: showPassword ? 0 : 10 
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {showPassword ? "Secure!" : ""}
+                    </motion.span>
+                  </motion.button>
+                </div>
               </div>
               <div className={styles.formGroup}>
                 <label htmlFor="confirmPassword">Confirm New Password</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  className={styles.input}
-                  placeholder="Confirm new password"
-                />
+                <div className={styles.passwordWrapper}>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    className={styles.input}
+                    placeholder="Confirm new password"
+                  />
+                  <motion.button
+                    type="button"
+                    onClick={toggleConfirmPasswordVisibility}
+                    className={styles.eyeButton}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    animate={{ 
+                      rotate: showConfirmPassword ? 0 : 15,
+                      scale: showConfirmPassword ? 1.1 : 1 
+                    }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <motion.span
+                      className={styles.eyeIcon}
+                      animate={{
+                        opacity: showConfirmPassword ? 1 : 0.7,
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {showConfirmPassword ? "✅" : "🔍"}
+                    </motion.span>
+                    <motion.span
+                      className={styles.eyeText}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ 
+                        opacity: showConfirmPassword ? 1 : 0,
+                        y: showConfirmPassword ? 0 : 10 
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {showConfirmPassword ? "Match!" : ""}
+                    </motion.span>
+                  </motion.button>
+                </div>
               </div>
               {error && <div className={styles.error}>{error}</div>}
               <button

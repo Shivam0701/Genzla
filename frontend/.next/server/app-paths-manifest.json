@@ -1,10 +1,6 @@
 {
-  "/page": "app/page.js",
-  "/admin/dashboard/page": "app/admin/dashboard/page.js",
   "/login/page": "app/login/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
   "/products/page": "app/products/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/customization/page": "app/customization/page.js",
   "/admin/products/new/page": "app/admin/products/new/page.js"
 }

@@ -807,3 +807,89 @@
   color: rgba(255, 255, 255, 0.4);
   font-size: 12px;
 }
+
+/* Creative Password Toggle Styles */
+.login_passwordWrapper__dZ01K {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login_passwordWrapper__dZ01K .login_input__NqkMD {
+  padding-right: 60px;
+  width: 100%;
+}
+
+.login_eyeButton__iJRmt {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.login_eyeButton__iJRmt:hover {
+  background: rgba(184, 155, 94, 0.1);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.login_eyeIcon__0U3pT {
+  font-size: 18px;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+}
+
+.login_eyeText__NM5z7 {
+  font-size: 8px;
+  color: #b89b5e;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Fun hover effects */
+.login_eyeButton__iJRmt:hover .login_eyeIcon__0U3pT {
+  animation: login_eyeWiggle__DNrSR 0.6s ease-in-out;
+}
+
+@keyframes login_eyeWiggle__DNrSR {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-5deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(5deg) scale(1.1);
+  }
+}
+/* Dark theme adjustments */
+[data-theme=dark] .login_eyeButton__iJRmt:hover {
+  background: rgba(184, 155, 94, 0.15);
+}
+
+[data-theme=dark] .login_eyeText__NM5z7 {
+  color: #d4af37;
+}
+
+/* Light theme adjustments */
+[data-theme=light] .login_eyeButton__iJRmt:hover {
+  background: rgba(184, 155, 94, 0.1);
+}
+
+[data-theme=light] .login_eyeText__NM5z7 {
+  color: #8b7355;
+}
