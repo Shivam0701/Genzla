@@ -1,0 +1,92 @@
+:root {
+  /* Colors */
+  --color-bg-light: #f5f4f0;
+  --color-bg-dark: #050509;
+  --color-text-light: #111111;
+  --color-text-muted: #767676;
+  --color-gold: #b89b5e;
+  --color-border: #2b2b2f;
+  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.18);
+  
+  /* Theme Variables */
+  --background-color: #f5f4f0;
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-tertiary: #888888;
+  --accent-color: #b89b5e;
+  --accent-color-dark: #9a8350;
+  --accent-color-light: rgba(184, 155, 94, 0.1);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --card-background: #ffffff;
+  --input-background: #ffffff;
+  --error-color: #dc3545;
+}
+
+[data-theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  --background-color: #050509;
+  --text-primary: #f5f4f0;
+  --text-secondary: #cccccc;
+  --text-tertiary: #999999;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --card-background: rgba(255, 255, 255, 0.05);
+  --input-background: rgba(255, 255, 255, 0.05);
+}
+
+/* Apply theme to body and html */
+html,
+body {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #b89b5e, #d4af37);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #d4af37, #f4e4bc);
+}

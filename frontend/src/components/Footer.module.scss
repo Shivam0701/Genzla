@@ -1,0 +1,84 @@
+.footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 40px 24px 28px;
+  margin-top: 48px;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.brandBlock {
+  max-width: 360px;
+}
+
+.brand {
+  font-size: 18px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.caption {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+.links {
+  display: flex;
+  gap: 64px;
+  font-size: 13px;
+}
+
+.sectionLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.socialRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contactText {
+  max-width: 280px;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+.bottomRow {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .links {
+    gap: 32px;
+  }
+
+  .bottomRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+

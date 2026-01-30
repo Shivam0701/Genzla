@@ -1,0 +1,14 @@
+<svg width="400" height="500" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="500" fill="#050509"/>
+  <rect x="32" y="40" width="336" height="420" rx="32" fill="#09090B" stroke="#27272F" stroke-width="2"/>
+  <rect x="100" y="120" width="200" height="240" rx="28" fill="#0F172A"/>
+  <rect x="130" y="150" width="140" height="60" rx="18" fill="#111827"/>
+  <rect x="130" y="230" width="80" height="12" rx="6" fill="#1E293B"/>
+  <rect x="130" y="254" width="96" height="10" rx="5" fill="#1E293B"/>
+  <rect x="130" y="278" width="70" height="10" rx="5" fill="#1E293B"/>
+  <circle cx="260" cy="290" r="22" fill="#B89B5E"/>
+  <circle cx="260" cy="290" r="14" fill="#050509"/>
+  <text x="50%" y="82%" text-anchor="middle" fill="#E5E5E5" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" letter-spacing="5">
+    GENZLA PRODUCT
+  </text>
+</svg>

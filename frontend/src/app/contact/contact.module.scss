@@ -1,0 +1,107 @@
+.main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 36px;
+  margin-bottom: 12px;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.8;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.input,
+.textarea {
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(10, 10, 14, 0.6);
+  color: inherit;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #b89b5e;
+    background-color: rgba(10, 10, 14, 0.8);
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 180px;
+}
+
+.submitButton {
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: 1px solid #b89b5e;
+  background-color: #111111;
+  color: #f5f4f0;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+  align-self: flex-start;
+
+  &:hover:not(:disabled) {
+    background-color: #1b1b1f;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.successMessage,
+.errorMessage {
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.successMessage {
+  background-color: rgba(184, 155, 94, 0.15);
+  border: 1px solid rgba(184, 155, 94, 0.3);
+  color: #b89b5e;
+}
+
+.errorMessage {
+  background-color: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #ef4444;
+}

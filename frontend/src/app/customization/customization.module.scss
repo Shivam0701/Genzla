@@ -1,0 +1,332 @@
+/* Customization Page Styles */
+.pageWrapper {
+  min-height: 100vh;
+  background: var(--background-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+  background: var(--background-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.headerSection {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 500;
+  margin-bottom: 12px;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.optional {
+  color: var(--accent-color);
+  font-weight: 500;
+  text-transform: none;
+  font-size: 12px;
+}
+
+.fieldDescription {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: -4px 0 8px 0;
+  line-height: 1.4;
+}
+
+.select,
+.textarea {
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--input-background);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background: var(--card-background);
+}
+
+/* Enhanced select dropdown styling for better visibility */
+.selectWrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.selectWrapper::after {
+  content: '▼';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+  padding-right: 40px;
+  width: 100%;
+}
+
+.select option {
+  background: var(--card-background);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  border: none;
+}
+
+/* Dark theme specific select styling */
+[data-theme="dark"] .select {
+  background-color: #1a1a1a;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #f5f4f0;
+}
+
+[data-theme="dark"] .selectWrapper::after {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="dark"] .select:focus {
+  background-color: #222222;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(184, 155, 94, 0.2);
+}
+
+[data-theme="dark"] .select option {
+  background-color: #1a1a1a !important;
+  color: #f5f4f0 !important;
+  border: none;
+}
+
+[data-theme="dark"] .select option:hover,
+[data-theme="dark"] .select option:checked {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+/* Light theme specific select styling */
+[data-theme="light"] .select {
+  background-color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #111111;
+}
+
+[data-theme="light"] .selectWrapper::after {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] .select:focus {
+  background-color: #ffffff;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(184, 155, 94, 0.2);
+}
+
+[data-theme="light"] .select option {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: none;
+}
+
+[data-theme="light"] .select option:hover,
+[data-theme="light"] .select option:checked {
+  background-color: #f8f8f8 !important;
+  color: #000000 !important;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+/* Dark theme textarea styling */
+[data-theme="dark"] .textarea {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .textarea:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--accent-color);
+}
+
+[data-theme="dark"] .textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Light theme textarea styling */
+[data-theme="light"] .textarea {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #111111;
+}
+
+[data-theme="light"] .textarea:focus {
+  background: #ffffff;
+  border-color: var(--accent-color);
+}
+
+[data-theme="light"] .textarea::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.fileInput {
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--input-background);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.25s ease;
+}
+
+.fileInput:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.fileInput::file-selector-button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--accent-color);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-right: 12px;
+  transition: all 0.2s ease;
+}
+
+.fileInput::file-selector-button:hover {
+  background: var(--accent-color-dark);
+}
+
+.fileName {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(184, 155, 94, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(184, 155, 94, 0.2);
+}
+
+.submitButton {
+  padding: 16px 32px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent-color), #d4af37);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d4af37, var(--accent-color));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(184, 155, 94, 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main {
+    padding: 32px 16px 48px;
+  }
+
+  .form {
+    gap: 24px;
+  }
+
+  .submitButton {
+    align-self: stretch;
+    text-align: center;
+  }
+}
+
+/* Dark Theme Enhancements */
+[data-theme="dark"] .select,
+[data-theme="dark"] .textarea,
+[data-theme="dark"] .fileInput {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .select:focus,
+[data-theme="dark"] .textarea:focus,
+[data-theme="dark"] .fileInput:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-color);
+}
+
+[data-theme="dark"] .fileName {
+  background: rgba(184, 155, 94, 0.15);
+  border-color: rgba(184, 155, 94, 0.3);
+  color: var(--text-secondary);
+}

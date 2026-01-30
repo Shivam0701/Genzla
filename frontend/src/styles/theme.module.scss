@@ -1,0 +1,27 @@
+.appRoot {
+  min-height: 100vh;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-light);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.appRootDark {
+  background-color: var(--color-bg-dark);
+  color: #f5f4f0;
+}
+
+.luxuryCard {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background-color: rgba(10, 10, 14, 0.9);
+  box-shadow: var(--shadow-soft);
+}
+
+.luxuryCardLight {
+  background-color: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+}
+
+.goldAccent {
+  color: var(--color-gold);
+}

@@ -1,0 +1,568 @@
+/* ================= GLOBAL STYLES ================= */
+
+.container {
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  /* Ensure container starts at top */
+  margin: 0;
+  padding: 0;
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  /* Ensure main content starts immediately after header */
+  margin-top: 0;
+}
+
+/* ================= HERO SECTION ================= */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 60px;
+  align-items: center;
+  padding: 60px 0 100px;
+  position: relative;
+}
+
+.heroCopy {
+  max-width: 600px;
+  z-index: 2;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 16px;
+  font-weight: 500;
+  color: var(--accent-color);
+}
+
+.title {
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.1;
+  margin: 0 0 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.titleAccent {
+  background: linear-gradient(135deg, var(--accent-color) 0%, #d4af37 50%, #f4e4bc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.subtitle {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.8;
+  margin-bottom: 32px;
+  max-width: 500px;
+}
+
+.heroCtas {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.primaryCta {
+  position: relative;
+  padding: 16px 32px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--accent-color), #d4af37);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(184, 155, 94, 0.3);
+}
+
+.primaryCta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 48px rgba(184, 155, 94, 0.4);
+}
+
+.secondaryCta {
+  padding: 16px 32px;
+  border-radius: 50px;
+  border: 2px solid rgba(184, 155, 94, 0.3);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.secondaryCta:hover {
+  border-color: #b89b5e;
+  background: rgba(184, 155, 94, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ================= HERO CAROUSEL ================= */
+
+.heroCarousel {
+  display: flex;
+  gap: 24px;
+}
+
+.heroCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform 0.3s ease;
+}
+
+.imageShell {
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 320px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.heroCard:hover .imageShell {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.heroCard:hover .image {
+  transform: scale(1.05);
+}
+
+.imageLabel {
+  font-size: 14px;
+  opacity: 0.8;
+  font-weight: 500;
+  text-align: center;
+  padding: 0 8px;
+}
+
+/* ================= SECTION HEADERS ================= */
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.sectionHeader h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 600;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #b89b5e, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sectionHeader p {
+  font-size: 18px;
+  opacity: 0.7;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ================= FEATURES SECTION ================= */
+
+.featuresSection {
+  padding: 80px 0;
+  position: relative;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.featureCard {
+  padding: 40px 32px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.featureCard:hover {
+  background: rgba(184, 155, 94, 0.05);
+  border-color: rgba(184, 155, 94, 0.3);
+  box-shadow: 0 20px 60px rgba(184, 155, 94, 0.1);
+}
+
+.featureIcon {
+  font-size: 48px;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.featureCard h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #b89b5e;
+}
+
+.featureCard p {
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+/* ================= METHODS SECTION ================= */
+
+.methodsSection {
+  padding: 80px 0;
+  position: relative;
+}
+
+.methodsSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184, 155, 94, 0.3), transparent);
+}
+
+.methodsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.methodCard {
+  position: relative;
+  border-radius: 20px;
+  padding: 32px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.methodCard:hover {
+  border-color: rgba(184, 155, 94, 0.4);
+  box-shadow: 0 20px 60px rgba(184, 155, 94, 0.15);
+  background: rgba(184, 155, 94, 0.05);
+}
+
+.methodCard h3 {
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #b89b5e;
+}
+
+.methodCard p {
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+/* ================= TESTIMONIALS SECTION ================= */
+
+.testimonialsSection {
+  padding: 80px 0;
+}
+
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+.testimonialCard {
+  padding: 32px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.testimonialCard:hover {
+  background: rgba(184, 155, 94, 0.05);
+  border-color: rgba(184, 155, 94, 0.3);
+  box-shadow: 0 20px 60px rgba(184, 155, 94, 0.1);
+}
+
+.stars {
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.testimonialCard p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.testimonialAuthor strong {
+  display: block;
+  font-weight: 600;
+  color: #b89b5e;
+  margin-bottom: 4px;
+}
+
+.testimonialAuthor span {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* ================= CTA SECTION ================= */
+
+.ctaSection {
+  padding: 80px 0 120px;
+  text-align: center;
+  position: relative;
+}
+
+.ctaContent h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 600;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #b89b5e, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ctaContent p {
+  font-size: 18px;
+  opacity: 0.8;
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaPrimary {
+  position: relative;
+  display: inline-block;
+  padding: 20px 40px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #b89b5e, #d4af37);
+  color: #111;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 12px 48px rgba(184, 155, 94, 0.3);
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 64px rgba(184, 155, 94, 0.4);
+}
+
+/* ================= LIGHT MODE ================= */
+
+:global(body.light) .featureCard,
+:global(body.light) .methodCard,
+:global(body.light) .testimonialCard {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+:global(body.light) .featureCard:hover,
+:global(body.light) .methodCard:hover,
+:global(body.light) .testimonialCard:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* ================= DARK MODE ================= */
+
+:global(body.dark) .featureCard,
+:global(body.dark) .methodCard,
+:global(body.dark) .testimonialCard {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+:global(body.dark) .featureCard:hover,
+:global(body.dark) .methodCard:hover,
+:global(body.dark) .testimonialCard:hover {
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 1200px) {
+  .main {
+    padding: 0 20px;
+  }
+  
+  .hero {
+    gap: 48px;
+  }
+}
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+    padding: 48px 0 80px;
+  }
+
+  .heroCarousel {
+    order: -1;
+    justify-content: center;
+  }
+
+  .heroCtas {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroCarousel {
+    flex-direction: column;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .featuresGrid,
+  .methodsGrid,
+  .testimonialsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroCtas {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .primaryCta,
+  .secondaryCta {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+
+  .featuresSection,
+  .methodsSection,
+  .testimonialsSection {
+    padding: 60px 0;
+  }
+
+  .sectionHeader {
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 0 16px;
+  }
+
+  .hero {
+    padding: 40px 0 60px;
+  }
+
+  .featuresSection,
+  .methodsSection,
+  .testimonialsSection {
+    padding: 60px 0;
+  }
+
+  .ctaSection {
+    padding: 60px 0 80px;
+  }
+
+  .sectionHeader {
+    margin-bottom: 32px;
+  }
+
+  .sectionHeader h2 {
+    margin-bottom: 16px;
+  }
+
+  .ctaContent p {
+    margin-bottom: 24px;
+  }
+}
+
+/* ================= THEME OVERRIDES ================= */
+
+/* Ensure all sections use theme variables */
+.container,
+.main,
+.hero,
+.features,
+.testimonials,
+.cta {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+}
+
+/* Dark theme specific overrides */
+[data-theme="dark"] .container {
+  background-color: var(--background-color);
+}
+
+[data-theme="dark"] .heroImage {
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+}
+
+[data-theme="dark"] .featureCard {
+  background: var(--card-background);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .testimonialCard {
+  background: var(--card-background);
+  border-color: var(--border-color);
+}
+
+/* Ensure text uses theme variables */
+.title,
+.subtitle,
+.description,
+.featureTitle,
+.featureDescription,
+.testimonialText,
+.testimonialAuthor {
+  color: var(--text-primary);
+}
+
+.eyebrow,
+.featureNumber,
+.testimonialRole {
+  color: var(--text-secondary);
+}
