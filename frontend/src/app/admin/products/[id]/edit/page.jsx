@@ -45,7 +45,7 @@ export default function EditProduct() {
     console.log("Fetching product with ID:", params.id);
     
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://genzla.onrender.com";
       const url = `${API_URL}/api/products/${params.id}`;
       console.log("Product fetch URL:", url);
       
@@ -82,7 +82,7 @@ export default function EditProduct() {
 
     try {
       const token = localStorage.getItem("genzla-token");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://genzla.onrender.com";
       const url = `${API_URL}/api/products/${params.id}`;
       
       console.log("Product update URL:", url);

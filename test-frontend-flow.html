@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENZLA Frontend Flow Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .test-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background-color: #0056b3;
+        }
+        .test-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        .url-display {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .token-display {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 11px;
+            word-break: break-all;
+        }
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .step {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .step.active {
+            background: #007bff;
+            color: white;
+        }
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 GENZLA Frontend Flow Test</h1>
+        
+        <div class="url-display">
+            <strong>Frontend URL:</strong> https://genzla.vercel.app<br>
+            <strong>Backend URL:</strong> https://genzla.onrender.com<br>
+            <strong>Test Mode:</strong> Complete Authentication & Feature Flow
+        </div>
+
+        <div class="flow-steps">
+            <div class="step" id="step-1">1. Send OTP</div>
+            <div class="step" id="step-2">2. Verify OTP</div>
+            <div class="step" id="step-3">3. Dashboard</div>
+            <div class="step" id="step-4">4. Customization</div>
+            <div class="step" id="step-5">5. Admin</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test-section">
+            <h3>🔐 Step 1: Authentication Test</h3>
+            <div class="form-group">
+                <label for="test-email">Email Address:</label>
+                <input type="email" id="test-email" value="test@genzla.com" placeholder="Enter test email">
+            </div>
+            <button class="test-button" onclick="sendOTP()">Send OTP</button>
+            <div id="otp-result" class="result"></div>
+            
+            <div id="otp-verification" style="display: none;">
+                <div class="form-group">
+                    <label for="test-otp">OTP Code:</label>
+                    <input type="text" id="test-otp" maxlength="6" placeholder="Enter 6-digit OTP">
+                </div>
+                <div class="form-group">
+                    <label for="test-name">Full Name:</label>
+                    <input type="text" id="test-name" value="Test User" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="test-phone">Phone Number:</label>
+                    <input type="tel" id="test-phone" value="+1234567890" placeholder="Enter phone number">
+                </div>
+                <button class="test-button" onclick="verifyOTP()">Verify OTP & Login</button>
+                <div id="verify-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test-section">
+            <h3>📊 Step 2: Dashboard Test</h3>
+            <button class="test-button" onclick="testDashboard()" disabled id="dashboard-btn">Test Dashboard API</button>
+            <div id="dashboard-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test-section">
+            <h3>🎨 Step 3: Customization Test</h3>
+            <div class="form-group">
+                <label for="product-type">Product Type:</label>
+                <select id="product-type">
+                    <option value="T-shirt">T-shirt</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Jeans">Jeans</option>
+                    <option value="Bag">Bag</option>
+                    <option value="Shoes">Shoes</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="customization-method">Customization Method:</label>
+                <select id="customization-method">
+                    <option value="Hand Painted">Hand Painted</option>
+                    <option value="DTF (Direct to Film)">DTF (Direct to Film)</option>
+                    <option value="DTG (Direct to Garment)">DTG (Direct to Garment)</option>
+                    <option value="Puff Print">Puff Print</option>
+                    <option value="Embroidery">Embroidery</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="design-notes">Design Notes:</label>
+                <textarea id="design-notes" rows="3" placeholder="Describe your design idea...">Test customization request from frontend flow test</textarea>
+            </div>
+            <button class="test-button" onclick="testCustomization()" disabled id="customization-btn">Submit Customization Request</button>
+            <div id="customization-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test-section">
+            <h3>👑 Step 4: Admin Test</h3>
+            <button class="test-button" onclick="testAdmin()" disabled id="admin-btn">Test Admin Dashboard</button>
+            <div id="admin-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test-section">
+            <h3>📦 Step 5: Products Test</h3>
+            <button class="test-button" onclick="testProducts()">Test Products API</button>
+            <div id="products-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test-section">
+            <h3>🔧 Current Session</h3>
+            <div class="token-display" id="token-display">No token yet</div>
+            <button class="test-button" onclick="clearSession()">Clear Session</button>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://genzla.onrender.com';
+        let currentToken = null;
+        let currentUser = null;
+
+        function displayResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+        }
+
+        function updateStep(stepNumber, status = 'active') {
+            const step = document.getElementById(`step-${stepNumber}`);
+            step.className = `step ${status}`;
+        }
+
+        function updateTokenDisplay() {
+            const display = document.getElementById('token-display');
+            if (currentToken) {
+                display.textContent = `Token: ${currentToken.substring(0, 50)}...\nUser: ${JSON.stringify(currentUser, null, 2)}`;
+            } else {
+                display.textContent = 'No token yet';
+            }
+        }
+
+        async function sendOTP() {
+            const email = document.getElementById('test-email').value;
+            
+            if (!email) {
+                displayResult('otp-result', 'Please enter an email address', 'error');
+                return;
+            }
+
+            displayResult('otp-result', 'Sending OTP...', 'info');
+            updateStep(1, 'active');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/send-otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResult('otp-result', 
+                        `✅ OTP sent successfully!\n\nResponse:\n${JSON.stringify(data, null, 2)}\n\n⚠️ Check your email for the OTP code`, 
+                        'success'
+                    );
+                    document.getElementById('otp-verification').style.display = 'block';
+                    updateStep(1, 'completed');
+                } else {
+                    displayResult('otp-result', 
+                        `❌ Failed to send OTP\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('otp-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function verifyOTP() {
+            const email = document.getElementById('test-email').value;
+            const otp = document.getElementById('test-otp').value;
+            const name = document.getElementById('test-name').value;
+            const phone = document.getElementById('test-phone').value;
+
+            if (!email || !otp || !name || !phone) {
+                displayResult('verify-result', 'Please fill in all fields', 'error');
+                return;
+            }
+
+            displayResult('verify-result', 'Verifying OTP...', 'info');
+            updateStep(2, 'active');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/verify-otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, otp, name, phone })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentToken = data.token;
+                    currentUser = data.user;
+                    
+                    displayResult('verify-result', 
+                        `✅ Authentication successful!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                    
+                    updateStep(2, 'completed');
+                    updateTokenDisplay();
+                    
+                    // Enable other test buttons
+                    document.getElementById('dashboard-btn').disabled = false;
+                    document.getElementById('customization-btn').disabled = false;
+                    document.getElementById('admin-btn').disabled = false;
+                    
+                } else {
+                    displayResult('verify-result', 
+                        `❌ OTP verification failed\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('verify-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testDashboard() {
+            if (!currentToken) {
+                displayResult('dashboard-result', 'Please login first', 'error');
+                return;
+            }
+
+            displayResult('dashboard-result', 'Testing dashboard API...', 'info');
+            updateStep(3, 'active');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customization/dashboard-stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResult('dashboard-result', 
+                        `✅ Dashboard API working!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                    updateStep(3, 'completed');
+                } else {
+                    displayResult('dashboard-result', 
+                        `⚠️ Dashboard API responded\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'warning'
+                    );
+                }
+            } catch (error) {
+                displayResult('dashboard-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testCustomization() {
+            if (!currentToken) {
+                displayResult('customization-result', 'Please login first', 'error');
+                return;
+            }
+
+            const productType = document.getElementById('product-type').value;
+            const customizationMethod = document.getElementById('customization-method').value;
+            const notes = document.getElementById('design-notes').value;
+
+            displayResult('customization-result', 'Submitting customization request...', 'info');
+            updateStep(4, 'active');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customization/request`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productType, customizationMethod, notes })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResult('customization-result', 
+                        `✅ Customization request submitted!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                    updateStep(4, 'completed');
+                } else {
+                    displayResult('customization-result', 
+                        `❌ Customization request failed\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('customization-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testAdmin() {
+            if (!currentToken) {
+                displayResult('admin-result', 'Please login first', 'error');
+                return;
+            }
+
+            displayResult('admin-result', 'Testing admin API...', 'info');
+            updateStep(5, 'active');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/customization-requests`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResult('admin-result', 
+                        `✅ Admin API working!\n\nFound ${data.requests?.length || 0} requests\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                    updateStep(5, 'completed');
+                } else if (response.status === 403) {
+                    displayResult('admin-result', 
+                        `⚠️ Admin access denied (expected for non-admin users)\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'warning'
+                    );
+                } else {
+                    displayResult('admin-result', 
+                        `❌ Admin API failed\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('admin-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testProducts() {
+            displayResult('products-result', 'Testing products API...', 'info');
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/products`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResult('products-result', 
+                        `✅ Products API working!\n\nFound ${data.products?.length || 0} products\n\nSample response:\n${JSON.stringify(data, null, 2).substring(0, 500)}...`, 
+                        'success'
+                    );
+                } else {
+                    displayResult('products-result', 
+                        `❌ Products API failed\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('products-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        function clearSession() {
+            currentToken = null;
+            currentUser = null;
+            updateTokenDisplay();
+            
+            // Reset steps
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`step-${i}`).className = 'step';
+            }
+            
+            // Disable buttons
+            document.getElementById('dashboard-btn').disabled = true;
+            document.getElementById('customization-btn').disabled = true;
+            document.getElementById('admin-btn').disabled = true;
+            
+            // Hide OTP verification
+            document.getElementById('otp-verification').style.display = 'none';
+            
+            // Clear results
+            const results = ['otp-result', 'verify-result', 'dashboard-result', 'customization-result', 'admin-result', 'products-result'];
+            results.forEach(id => {
+                const element = document.getElementById(id);
+                element.textContent = '';
+                element.className = 'result';
+            });
+        }
+
+        // Auto-test products on page load
+        window.addEventListener('load', () => {
+            setTimeout(testProducts, 1000);
+        });
+    </script>
+</body>
+</html>

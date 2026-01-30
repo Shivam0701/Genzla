@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENZLA - Email Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f4f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #b89b5e;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="email"]:focus {
+            border-color: #b89b5e;
+            outline: none;
+        }
+        button {
+            background: #b89b5e;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #a08850;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-emails {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .test-emails h3 {
+            margin-top: 0;
+        }
+        .test-emails ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GENZLA Email Test</h1>
+        
+        <div class="test-emails">
+            <h3>📧 Test Email Addresses</h3>
+            <p>These emails will show OTP directly in the response:</p>
+            <ul>
+                <li>test@genzla.com</li>
+                <li>demo@genzla.com</li>
+                <li>test@example.com</li>
+                <li>admin@test.com</li>
+            </ul>
+            <p><strong>Admin email:</strong> store.genzla@gmail.com (will send real email or show OTP as fallback)</p>
+        </div>
+        
+        <form id="emailForm">
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email address">
+            </div>
+            
+            <button type="submit" id="sendBtn">Send OTP</button>
+            <button type="button" id="testBtn" onclick="fillTestEmail()">Use Test Email</button>
+            <button type="button" id="adminBtn" onclick="fillAdminEmail()">Use Admin Email</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('emailForm');
+        const emailInput = document.getElementById('email');
+        const sendBtn = document.getElementById('sendBtn');
+        const resultDiv = document.getElementById('result');
+
+        function fillTestEmail() {
+            emailInput.value = 'test@genzla.com';
+        }
+
+        function fillAdminEmail() {
+            emailInput.value = 'store.genzla@gmail.com';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            if (!email) {
+                showResult('Please enter an email address', 'error');
+                return;
+            }
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('https://genzla.onrender.com/api/auth/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    let message = data.message;
+                    if (data.developmentOTP) {
+                        message += `<br><strong>OTP: ${data.developmentOTP}</strong>`;
+                    }
+                    if (data.testMode) {
+                        message += '<br><em>(Test Mode)</em>';
+                    }
+                    if (data.emailFallback) {
+                        message += '<br><em>(Email Fallback Mode)</em>';
+                    }
+                    showResult(message, 'success');
+                } else {
+                    showResult(data.message || 'Failed to send OTP', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showResult('Network error. Please check if the backend is running.', 'error');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send OTP';
+            }
+        });
+
+        function showResult(message, type) {
+            resultDiv.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+    </script>
+</body>
+</html>

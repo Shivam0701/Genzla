@@ -1,27 +1,33 @@
 const nodemailer = require("nodemailer");
 
-// Create transporter with better error handling
+// Create transporter with enhanced error handling and debugging
 const createTransporter = () => {
+  // Validate required environment variables
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.error("❌ Missing required email environment variables");
+    throw new Error("Email configuration incomplete - missing SMTP_USER or SMTP_PASS");
+  }
+
   const config = {
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: false, // true for 465, false for other ports
+    service: 'gmail', // Use Gmail service directly
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
     tls: {
-      rejectUnauthorized: false, // Allow self-signed certificates
+      rejectUnauthorized: false,
     },
   };
 
   return nodemailer.createTransport(config);
 };
 
-// Verify transporter configuration
+// Verify transporter configuration with detailed logging
 const verifyTransporter = async () => {
   try {
+    console.log("🔍 Verifying email transporter...");
     const transporter = createTransporter();
+    
     await transporter.verify();
     console.log("✅ Email transporter verified successfully");
     return true;
@@ -32,7 +38,7 @@ const verifyTransporter = async () => {
 };
 
 /**
- * Send OTP email
+ * Send OTP email with enhanced error handling
  * @param {string} email - Recipient email
  * @param {string} otp - 6-digit OTP
  * @param {string} type - Email type: 'verification' or 'password reset'
@@ -50,10 +56,7 @@ const sendOTP = async (email, otp, type = 'verification') => {
       : 'Use the following code to complete your authentication:';
     
     const mailOptions = {
-      from: {
-        name: "GENZLA",
-        address: process.env.SMTP_FROM || process.env.SMTP_USER,
-      },
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: email,
       subject,
       html: `
@@ -61,28 +64,22 @@ const sendOTP = async (email, otp, type = 'verification') => {
         <html>
         <head>
           <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>${subject}</title>
         </head>
-        <body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f4f0;">
-          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+        <body style="font-family: Arial, sans-serif; background-color: #f5f4f0; margin: 0; padding: 20px;">
+          <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
             
-            <!-- Header -->
             <div style="background: linear-gradient(135deg, #b89b5e, #d4af37); padding: 40px 30px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;">GENZLA</h1>
-              <p style="margin: 8px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px; letter-spacing: 0.1em;">LUXURY CUSTOM CLOTHING</p>
+              <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 500; letter-spacing: 0.18em;">GENZLA</h1>
+              <p style="margin: 8px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px;">LUXURY CUSTOM CLOTHING</p>
             </div>
             
-            <!-- Content -->
             <div style="padding: 40px 30px;">
-              <h2 style="margin: 0 0 20px 0; color: #111111; font-size: 24px; font-weight: 500;">${title}</h2>
-              <p style="margin: 0 0 30px 0; color: #555555; font-size: 16px; line-height: 1.6;">
-                ${message}
-              </p>
+              <h2 style="margin: 0 0 20px 0; color: #111111; font-size: 24px;">${title}</h2>
+              <p style="margin: 0 0 30px 0; color: #555555; font-size: 16px;">${message}</p>
               
-              <!-- OTP Box -->
               <div style="background-color: #f5f4f0; border: 2px solid #b89b5e; border-radius: 12px; padding: 30px; text-align: center; margin: 30px 0;">
-                <div style="font-size: 36px; font-weight: 600; color: #b89b5e; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
+                <div style="font-size: 36px; font-weight: 600; color: #b89b5e; letter-spacing: 8px; font-family: monospace;">${otp}</div>
               </div>
               
               <div style="background-color: #fff8f0; border-left: 4px solid #b89b5e; padding: 15px 20px; margin: 30px 0;">
@@ -91,17 +88,11 @@ const sendOTP = async (email, otp, type = 'verification') => {
                   If you didn't request this code, please ignore this email.
                 </p>
               </div>
-              
-              <p style="margin: 30px 0 0 0; color: #888888; font-size: 14px; line-height: 1.6;">
-                Need help? Contact us at <a href="mailto:support@genzla.com" style="color: #b89b5e; text-decoration: none;">support@genzla.com</a>
-              </p>
             </div>
             
-            <!-- Footer -->
-            <div style="background-color: #f8f8f8; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee;">
+            <div style="background-color: #f8f8f8; padding: 20px 30px; text-align: center;">
               <p style="margin: 0; color: #999999; font-size: 12px;">
-                © ${new Date().getFullYear()} GENZLA. All rights reserved.<br>
-                Luxury Custom Clothing Studio
+                © ${new Date().getFullYear()} GENZLA. All rights reserved.
               </p>
             </div>
             
@@ -109,18 +100,7 @@ const sendOTP = async (email, otp, type = 'verification') => {
         </body>
         </html>
       `,
-      text: `
-GENZLA - ${title}
-
-Your ${type} code is: ${otp}
-
-This code expires in 10 minutes.
-If you didn't request this code, please ignore this email.
-
-Need help? Contact us at support@genzla.com
-
-© ${new Date().getFullYear()} GENZLA. All rights reserved.
-      `.trim(),
+      text: `GENZLA - ${title}\n\nYour ${type} code is: ${otp}\n\nThis code expires in 10 minutes.\n\n© ${new Date().getFullYear()} GENZLA.`,
     };
 
     const result = await transporter.sendMail(mailOptions);
@@ -140,6 +120,8 @@ Need help? Contact us at support@genzla.com
  */
 const sendContactEmail = async (adminEmail, contactData) => {
   try {
+    console.log(`📧 Sending contact form email to admin:`, adminEmail);
+    
     const transporter = createTransporter();
     
     const mailOptions = {

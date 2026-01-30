@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "./ThemeContext";
 import styles from "./Header.module.scss";
@@ -34,16 +33,20 @@ export function Header() {
         }
       }
     }
+  }, []);
 
+  useEffect(() => {
     // Close mobile menu when clicking outside
     const handleClickOutside = (event) => {
-      if (isMenuOpen && !event.target.closest('.header')) {
+      if (isMenuOpen && !event.target.closest(`.${styles.header}`)) {
         setIsMenuOpen(false);
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    if (isMenuOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
   }, [isMenuOpen]);
 
   const handleLogout = useCallback(() => {
@@ -72,15 +75,15 @@ export function Header() {
   }, [pathname, router]);
 
   return (
-    <header className={`${styles.header} header`}>
+    <header className={styles.header}>
       <div className={styles.inner}>
-        <Link 
-          href="/" 
-          className={styles.brand} 
+        <button 
           onClick={() => handleNavClick("/")}
+          className={styles.brand}
+          type="button"
         >
           GENZLA
-        </Link>
+        </button>
         
         {/* Desktop Navigation */}
         <nav className={styles.nav}>

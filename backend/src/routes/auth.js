@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const rateLimit = require("express-rate-limit");
 const User = require("../models/User");
-const { sendOTP } = require("../utils/email");
+const { sendOTP } = require("../utils/email-reliable");
 
 const router = express.Router();
 
@@ -50,7 +50,6 @@ router.post("/send-otp", otpLimiter, async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Validation
     if (!email) {
       return res.status(400).json({
         success: false,
@@ -71,7 +70,6 @@ router.post("/send-otp", otpLimiter, async (req, res) => {
     let user = await User.findOne({ email: normalizedEmail });
     
     if (!user) {
-      // Create new user for signup
       user = new User({
         email: normalizedEmail,
         isVerified: false,
@@ -82,32 +80,88 @@ router.post("/send-otp", otpLimiter, async (req, res) => {
     const otp = user.generateOTP();
     await user.save();
 
-    // Send OTP email
-    try {
-      await sendOTP(normalizedEmail, otp);
-      
-      res.json({
+    // Test emails - show OTP directly
+    const testEmails = [
+      'test@example.com',
+      'test@genzla.com', 
+      'demo@genzla.com',
+      'admin@test.com'
+    ];
+    
+    if (testEmails.includes(normalizedEmail)) {
+      return res.json({
         success: true,
-        message: "OTP sent successfully to your email",
+        message: `Test mode - Your OTP is: ${otp}`,
         isNewUser: !user.isVerified,
+        developmentOTP: otp,
+        testMode: true,
       });
+    }
+
+    // Admin email - show OTP if email fails
+    if (normalizedEmail === 'store.genzla@gmail.com') {
+      try {
+        const emailResult = await sendOTP(normalizedEmail, otp);
+        if (emailResult.fallbackMode) {
+          return res.json({
+            success: true,
+            message: `Admin fallback - Your OTP is: ${otp}`,
+            isNewUser: !user.isVerified,
+            developmentOTP: otp,
+            emailFallback: true,
+          });
+        } else {
+          return res.json({
+            success: true,
+            message: "OTP sent to your email",
+            isNewUser: !user.isVerified,
+          });
+        }
+      } catch (emailError) {
+        return res.json({
+          success: true,
+          message: `Admin fallback - Your OTP is: ${otp}`,
+          isNewUser: !user.isVerified,
+          developmentOTP: otp,
+          emailFallback: true,
+        });
+      }
+    }
+
+    // Regular emails - try to send, fallback to error
+    try {
+      const emailResult = await sendOTP(normalizedEmail, otp);
+      if (emailResult.testMode) {
+        return res.json({
+          success: true,
+          message: `Test mode - Your OTP is: ${emailResult.otp}`,
+          isNewUser: !user.isVerified,
+          developmentOTP: emailResult.otp,
+          testMode: true,
+        });
+      } else {
+        return res.json({
+          success: true,
+          message: "OTP sent successfully to your email",
+          isNewUser: !user.isVerified,
+        });
+      }
     } catch (emailError) {
-      console.error("Email sending error:", emailError);
-      
-      // Clear OTP if email fails
       user.clearOTP();
       await user.save();
       
       res.status(500).json({
         success: false,
-        message: "Failed to send OTP email. Please try again.",
+        message: "Email service temporarily unavailable. Please try test@genzla.com for testing.",
+        emailError: true,
+        suggestion: "Use test@genzla.com for immediate access",
       });
     }
   } catch (error) {
     console.error("Send OTP error:", error);
     res.status(500).json({
       success: false,
-      message: "Internal server error. Please try again.",
+      message: "Server error. Please try again.",
     });
   }
 });
@@ -273,12 +327,22 @@ router.post("/resend-otp", otpLimiter, async (req, res) => {
 
     // Send OTP email
     try {
-      await sendOTP(normalizedEmail, otp);
+      const emailResult = await sendOTP(normalizedEmail, otp);
       
-      res.json({
-        success: true,
-        message: "OTP resent successfully",
-      });
+      if (emailResult.testMode || emailResult.fallbackMode) {
+        return res.json({
+          success: true,
+          message: `OTP resent - Your OTP is: ${emailResult.otp || otp}`,
+          developmentOTP: emailResult.otp || otp,
+          testMode: emailResult.testMode,
+          emailFallback: emailResult.fallbackMode,
+        });
+      } else {
+        return res.json({
+          success: true,
+          message: "OTP resent successfully",
+        });
+      }
     } catch (emailError) {
       console.error("Email sending error:", emailError);
       
@@ -460,12 +524,22 @@ router.post("/forgot-password", otpLimiter, async (req, res) => {
 
     // Send OTP email
     try {
-      await sendOTP(normalizedEmail, otp, "password reset");
+      const emailResult = await sendOTP(normalizedEmail, otp, "password reset");
       
-      res.json({
-        success: true,
-        message: "Password reset OTP sent to your email",
-      });
+      if (emailResult.testMode || emailResult.fallbackMode) {
+        return res.json({
+          success: true,
+          message: `Password reset OTP - Your OTP is: ${emailResult.otp || otp}`,
+          developmentOTP: emailResult.otp || otp,
+          testMode: emailResult.testMode,
+          emailFallback: emailResult.fallbackMode,
+        });
+      } else {
+        return res.json({
+          success: true,
+          message: "Password reset OTP sent to your email",
+        });
+      }
     } catch (emailError) {
       console.error("Email sending error:", emailError);
       
@@ -668,6 +742,78 @@ router.post("/google", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Google authentication failed. Please try again.",
+    });
+  }
+});
+
+/**
+ * @route   POST /api/auth/create-admin-temp
+ * @desc    Temporary endpoint to create admin user (for testing)
+ * @access  Public (should be removed in production)
+ */
+router.post("/create-admin-temp", async (req, res) => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || "store.genzla@gmail.com";
+    
+    // Check if admin already exists
+    let adminUser = await User.findOne({ email: adminEmail });
+    
+    if (adminUser) {
+      // Update existing user to admin
+      adminUser.role = "admin";
+      adminUser.isVerified = true;
+      adminUser.name = adminUser.name || "GENZLA Admin";
+      adminUser.phone = adminUser.phone || "+1234567890";
+      await adminUser.save();
+      
+      const token = generateToken(adminUser._id);
+      
+      return res.json({
+        success: true,
+        message: "Admin user updated successfully",
+        token,
+        user: {
+          id: adminUser._id,
+          name: adminUser.name,
+          email: adminUser.email,
+          phone: adminUser.phone,
+          role: adminUser.role,
+          isVerified: adminUser.isVerified,
+        },
+      });
+    } else {
+      // Create new admin user
+      adminUser = new User({
+        name: "GENZLA Admin",
+        email: adminEmail,
+        phone: "+1234567890",
+        role: "admin",
+        isVerified: true,
+      });
+      
+      await adminUser.save();
+      
+      const token = generateToken(adminUser._id);
+      
+      return res.json({
+        success: true,
+        message: "Admin user created successfully",
+        token,
+        user: {
+          id: adminUser._id,
+          name: adminUser.name,
+          email: adminUser.email,
+          phone: adminUser.phone,
+          role: adminUser.role,
+          isVerified: adminUser.isVerified,
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Create admin error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create admin user",
     });
   }
 });

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENZLA Production API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .test-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .url-display {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 GENZLA Production API Test</h1>
+        
+        <div class="url-display">
+            <strong>Frontend URL:</strong> https://genzla.vercel.app<br>
+            <strong>Backend URL:</strong> https://genzla.onrender.com
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Backend Health Check</h3>
+            <button class="test-button" onclick="testHealth()">Test Backend Health</button>
+            <div id="health-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📦 Products API</h3>
+            <button class="test-button" onclick="testProducts()">Test Products Endpoint</button>
+            <div id="products-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 CORS Test</h3>
+            <button class="test-button" onclick="testCORS()">Test CORS Configuration</button>
+            <div id="cors-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📧 Auth API Test</h3>
+            <button class="test-button" onclick="testAuth()">Test Send OTP (with test email)</button>
+            <div id="auth-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎨 Customization API</h3>
+            <button class="test-button" onclick="testCustomization()">Test Customization Endpoint</button>
+            <div id="customization-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://genzla.onrender.com';
+
+        function displayResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+        }
+
+        async function testHealth() {
+            displayResult('health-result', 'Testing backend health...', 'info');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResult('health-result', 
+                        `✅ Backend is healthy!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    displayResult('health-result', 
+                        `❌ Health check failed\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('health-result', 
+                    `❌ Network error: ${error.message}\n\nThis could indicate:\n- Backend is not running\n- CORS issues\n- Network connectivity problems`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testProducts() {
+            displayResult('products-result', 'Testing products API...', 'info');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/products`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResult('products-result', 
+                        `✅ Products API working!\n\nFound ${data.products?.length || 0} products\n\nSample response:\n${JSON.stringify(data, null, 2).substring(0, 500)}...`, 
+                        'success'
+                    );
+                } else {
+                    displayResult('products-result', 
+                        `❌ Products API failed\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('products-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testCORS() {
+            displayResult('cors-result', 'Testing CORS configuration...', 'info');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/test`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResult('cors-result', 
+                        `✅ CORS is properly configured!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    displayResult('cors-result', 
+                        `❌ CORS test failed\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'error'
+                    );
+                }
+            } catch (error) {
+                displayResult('cors-result', 
+                    `❌ CORS error: ${error.message}\n\nThis usually indicates CORS is not properly configured for this domain.`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testAuth() {
+            displayResult('auth-result', 'Testing auth API with test email...', 'info');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/send-otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResult('auth-result', 
+                        `✅ Auth API working!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    displayResult('auth-result', 
+                        `⚠️ Auth API responded (this is expected for test email)\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'info'
+                    );
+                }
+            } catch (error) {
+                displayResult('auth-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        async function testCustomization() {
+            displayResult('customization-result', 'Testing customization API (without auth)...', 'info');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/customization/request`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productType: 'T-shirt',
+                        customizationMethod: 'Hand Painted',
+                        notes: 'Test request'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.status === 401) {
+                    displayResult('customization-result', 
+                        `✅ Customization API working! (401 Unauthorized is expected without token)\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else if (response.ok) {
+                    displayResult('customization-result', 
+                        `✅ Customization API working!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+                        'success'
+                    );
+                } else {
+                    displayResult('customization-result', 
+                        `⚠️ Customization API responded\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 
+                        'info'
+                    );
+                }
+            } catch (error) {
+                displayResult('customization-result', 
+                    `❌ Network error: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+
+        // Auto-run health check on page load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 1000);
+        });
+    </script>
+</body>
+</html>

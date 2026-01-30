@@ -43,6 +43,9 @@ export default function ClientDashboard() {
         return;
       }
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/customization/dashboard-stats`,
         {
@@ -50,11 +53,13 @@ export default function ClientDashboard() {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
+          signal: controller.signal,
         }
       );
 
+      clearTimeout(timeoutId);
+
       if (response.status === 401) {
-        // Token expired or invalid
         localStorage.removeItem("genzla-token");
         localStorage.removeItem("genzla-user");
         router.push("/login");
@@ -65,7 +70,6 @@ export default function ClientDashboard() {
         const data = await response.json();
         setStats(data.stats);
       } else {
-        // If API doesn't exist or fails, set default stats
         console.log("Dashboard stats API not available, using defaults");
         setStats({
           totalRequests: 0,
@@ -75,8 +79,11 @@ export default function ClientDashboard() {
         });
       }
     } catch (error) {
-      console.error("Failed to fetch dashboard stats:", error);
-      // Set default stats on error
+      if (error.name === 'AbortError') {
+        console.log("Dashboard stats request timed out");
+      } else {
+        console.error("Failed to fetch dashboard stats:", error);
+      }
       setStats({
         totalRequests: 0,
         inProgress: 0,

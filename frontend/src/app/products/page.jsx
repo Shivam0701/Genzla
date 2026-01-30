@@ -20,19 +20,31 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/products`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+        {
+          signal: controller.signal,
+        }
       );
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
-        // Fix: Extract products array from response
         setProducts(data.products || []);
       } else {
         console.error("Failed to fetch products:", response.statusText);
         setProducts([]);
       }
     } catch (error) {
-      console.error("Failed to fetch products:", error);
+      if (error.name === 'AbortError') {
+        console.log("Products request timed out");
+      } else {
+        console.error("Failed to fetch products:", error);
+      }
       setProducts([]);
     } finally {
       setLoading(false);

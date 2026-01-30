@@ -44,62 +44,65 @@ export default function AdminDashboard() {
   }, [router]);
 
   const fetchData = async (token) => {
-    console.log("Fetching admin data...");
-    
-    // Hardcode API URL temporarily for debugging
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-    console.log("Using API URL:", API_URL);
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://genzla.onrender.com";
     
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       const requestsUrl = `${API_URL}/api/admin/customization-requests`;
       const usersUrl = `${API_URL}/api/admin/users`;
       const productsUrl = `${API_URL}/api/products`;
       
-      console.log("API URLs:", { requestsUrl, usersUrl, productsUrl });
-      
       const [requestsRes, usersRes, productsRes] = await Promise.all([
         fetch(requestsUrl, {
           headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
         }),
         fetch(usersUrl, {
           headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
         }),
         fetch(productsUrl, {
           headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
         }),
       ]);
 
-      console.log("Response statuses:", {
-        requests: requestsRes.status,
-        users: usersRes.status,
-        products: productsRes.status
-      });
+      clearTimeout(timeoutId);
 
       if (requestsRes.ok) {
         const data = await requestsRes.json();
-        console.log("Requests data:", data);
         setRequests(data.requests || []);
       } else {
-        console.error("Failed to fetch requests:", await requestsRes.text());
+        console.error("Failed to fetch requests:", requestsRes.status);
+        setRequests([]);
       }
       
       if (usersRes.ok) {
         const data = await usersRes.json();
-        console.log("Users data:", data);
         setUsers(data.users || []);
       } else {
-        console.error("Failed to fetch users:", await usersRes.text());
+        console.error("Failed to fetch users:", usersRes.status);
+        setUsers([]);
       }
       
       if (productsRes.ok) {
         const data = await productsRes.json();
-        console.log("Products data:", data);
         setProducts(data.products || []);
       } else {
-        console.error("Failed to fetch products:", await productsRes.text());
+        console.error("Failed to fetch products:", productsRes.status);
+        setProducts([]);
       }
     } catch (error) {
-      console.error("Network error fetching data:", error);
+      if (error.name === 'AbortError') {
+        console.log("Admin data requests timed out");
+      } else {
+        console.error("Network error fetching data:", error);
+      }
+      setRequests([]);
+      setUsers([]);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -118,8 +121,8 @@ export default function AdminDashboard() {
       const token = localStorage.getItem("genzla-token");
       console.log("Token exists:", !!token);
       
-      // Hardcode API URL temporarily for debugging
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      // Use production API URL
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://genzla.onrender.com";
       const url = `${API_URL}/api/admin/customization-requests/${requestId}/status`;
       console.log("API URL:", url);
       

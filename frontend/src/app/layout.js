@@ -15,32 +15,41 @@ export const metadata = {
   description: "GENZLA is a luxury clothing brand offering bespoke customization on premium pieces.",
 };
 
-// Theme initialization script
-const themeScript = `
-  (function() {
-    try {
-      const theme = localStorage.getItem('genzla-theme') || 'light';
-      document.documentElement.setAttribute('data-theme', theme);
-      document.body.setAttribute('data-theme', theme);
-      document.body.classList.add('theme-' + theme);
-    } catch (e) {
-      document.documentElement.setAttribute('data-theme', 'light');
-      document.body.setAttribute('data-theme', 'light');
-      document.body.classList.add('theme-light');
-    }
-  })();
-`;
-
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={playfairDisplay.className}>
+    <html lang="en" className={playfairDisplay.className} data-theme="light">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem('genzla-theme') || 'light';
+                  if (document.documentElement) {
+                    document.documentElement.setAttribute('data-theme', theme);
+                  }
+                  if (document.body) {
+                    document.body.setAttribute('data-theme', theme);
+                  }
+                } catch (e) {
+                  if (document.documentElement) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                  }
+                  if (document.body) {
+                    document.body.setAttribute('data-theme', 'light');
+                  }
+                }
+              })();
+            `,
+          }}
+        />
       </head>
-      <body className={styles.body}>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
-          <ThemeProvider>{children}</ThemeProvider>
-        </GoogleOAuthProvider>
+      <body className={styles.body} data-theme="light">
+        <ThemeProvider>
+          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "dummy-client-id"}>
+            {children}
+          </GoogleOAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -45,7 +45,7 @@ export default function NewProduct() {
 
     try {
       const token = localStorage.getItem("genzla-token");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://genzla.onrender.com";
       const url = `${API_URL}/api/products`;
       
       console.log("Product create URL:", url);

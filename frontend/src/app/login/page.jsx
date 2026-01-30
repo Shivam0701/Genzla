@@ -44,6 +44,11 @@ export default function LoginPage() {
 
       if (response.ok) {
         setStep(2);
+        // Auto-fill OTP if provided (for test emails)
+        if (data.developmentOTP) {
+          setFormData(prev => ({ ...prev, otp: data.developmentOTP }));
+          setError(`✅ ${data.message}`);
+        }
       } else {
         setError(data.message || "Failed to send OTP");
       }

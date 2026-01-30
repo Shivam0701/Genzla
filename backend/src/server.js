@@ -1,10 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { verifyTransporter } = require("./utils/email");
+const { verifyTransporter } = require("./utils/email-reliable");
 require("dotenv").config();
 
 const app = express();
+
+// ✅ FIX HERE
+app.set("trust proxy", 1);
 
 /* =============================
    BASIC CONFIG
@@ -16,7 +19,9 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 const allowedOrigins = [
   FRONTEND_URL,
   "https://genzla.vercel.app",
+  "https://genzla.vercel.app/",
   "http://localhost:3000",
+  "http://localhost:3001",
 ];
 
 /* =============================

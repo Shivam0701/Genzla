@@ -53,7 +53,6 @@ export default function CustomizationPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate required fields
     if (!formData.productCategory || !formData.customizationType || !formData.description) {
       alert("Please fill in all required fields (Product Category, Customization Type, and Design Description)");
       return;
@@ -63,13 +62,10 @@ export default function CustomizationPage() {
 
     try {
       const formDataToSend = new FormData();
-      
-      // Map frontend field names to backend field names
       formDataToSend.append("productType", formData.productCategory);
       formDataToSend.append("customizationMethod", formData.customizationType);
       formDataToSend.append("notes", formData.description);
       
-      // Only append image if one is selected
       if (formData.designFile) {
         formDataToSend.append("referenceImage", formData.designFile);
       }
@@ -81,13 +77,19 @@ export default function CustomizationPage() {
         return;
       }
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customization/request`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
         body: formDataToSend,
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await response.json();
 
@@ -99,7 +101,6 @@ export default function CustomizationPage() {
           description: "",
           designFile: null,
         });
-        // Reset file input
         const fileInput = document.getElementById("designFile");
         if (fileInput) fileInput.value = "";
       } else {
@@ -107,8 +108,12 @@ export default function CustomizationPage() {
         alert(data.message || `Failed to submit request: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
-      console.error("Error submitting request:", error);
-      alert("Error submitting request. Please try again.");
+      if (error.name === 'AbortError') {
+        alert("Request timed out. Please try again.");
+      } else {
+        console.error("Error submitting request:", error);
+        alert("Error submitting request. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
