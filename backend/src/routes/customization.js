@@ -1,37 +1,16 @@
 const express = require("express");
 const CustomizationRequest = require("../models/CustomizationRequest");
 const { auth } = require("../middleware/auth");
-const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("../utils/cloudinary");
+const { customizationUpload } = require("../utils/cloudinary");
 
 const router = express.Router();
-
-// Configure Cloudinary storage for multer
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "genzla/customization-requests",
-    allowed_formats: ["jpg", "jpeg", "png", "gif", "webp"],
-    transformation: [
-      { width: 1200, height: 1200, crop: "limit", quality: "auto" }
-    ],
-  },
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-});
 
 /**
  * @route   POST /api/customization/request
  * @desc    Submit a new customization request
  * @access  Private
  */
-router.post("/request", auth, upload.single("referenceImage"), async (req, res) => {
+router.post("/request", auth, customizationUpload.single("referenceImage"), async (req, res) => {
   try {
     const { productType, customizationMethod, notes } = req.body;
 

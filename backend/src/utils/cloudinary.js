@@ -8,7 +8,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
+// Storage for product images
+const productStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "genzla/products",
@@ -19,11 +20,30 @@ const storage = new CloudinaryStorage({
   },
 });
 
+// Storage for customization request images
+const customizationStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "genzla/customization-requests",
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "gif"],
+    transformation: [
+      { width: 1200, height: 1200, crop: "limit", quality: "auto" }
+    ],
+  },
+});
+
 const upload = multer({ 
-  storage: storage,
+  storage: productStorage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
 
-module.exports = { cloudinary, upload };
+const customizationUpload = multer({ 
+  storage: customizationStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+});
+
+module.exports = { cloudinary, upload, customizationUpload };

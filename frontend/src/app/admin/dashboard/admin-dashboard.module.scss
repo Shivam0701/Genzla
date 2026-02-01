@@ -878,3 +878,31 @@
     flex-direction: column;
   }
 }
+/* Reference Image Styles */
+.imagePreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.referenceImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.referenceImage:hover {
+  transform: scale(1.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(184, 155, 94, 0.3);
+}
+
+.noImage {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 12px;
+}

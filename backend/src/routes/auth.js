@@ -783,12 +783,18 @@ router.post("/google", async (req, res) => {
 
     const normalizedEmail = email.toLowerCase().trim();
 
+    // Admin emails that get automatic admin access
+    const adminEmails = [
+      'store.genzla@gmail.com',
+      // Add more admin emails here if needed
+    ];
+
     // Find or create user
     let user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
-      // For new Google users, phone is required
-      if (!phone) {
+      // For new Google users, phone is required (except for admin emails)
+      if (!phone && !adminEmails.includes(normalizedEmail)) {
         return res.status(400).json({
           success: false,
           message: "Phone number is required for new accounts",
@@ -796,40 +802,55 @@ router.post("/google", async (req, res) => {
         });
       }
 
-      // Validate phone number format
-      const phoneRegex = /^[+]?[\d\s\-\(\)]{10,15}$/;
-      if (!phoneRegex.test(phone.trim())) {
-        return res.status(400).json({
-          success: false,
-          message: "Please provide a valid phone number",
-        });
+      // Validate phone number format (if provided)
+      if (phone) {
+        const phoneRegex = /^[+]?[\d\s\-\(\)]{10,15}$/;
+        if (!phoneRegex.test(phone.trim())) {
+          return res.status(400).json({
+            success: false,
+            message: "Please provide a valid phone number",
+          });
+        }
+
+        // Check if phone number already exists
+        const existingPhone = await User.findOne({ phone: phone.trim() });
+        if (existingPhone) {
+          return res.status(400).json({
+            success: false,
+            message: "Phone number is already registered",
+          });
+        }
       }
 
-      // Check if phone number already exists
-      const existingPhone = await User.findOne({ phone: phone.trim() });
-      if (existingPhone) {
-        return res.status(400).json({
-          success: false,
-          message: "Phone number is already registered",
-        });
-      }
+      // Determine role based on email
+      const role = adminEmails.includes(normalizedEmail) ? 'admin' : 'customer';
 
       // Create new user from Google account
       user = new User({
         name: name || "Google User",
         email: normalizedEmail,
-        phone: phone.trim(),
+        phone: phone ? phone.trim() : '+1234567890', // Default phone for admin
+        role: role, // Set admin role for admin emails
         isVerified: true, // Google accounts are pre-verified
         googleId: googleToken, // Store Google token/ID
         avatar: picture,
       });
       await user.save();
+
+      console.log(`🔑 Google auth: Created ${role} user for ${normalizedEmail}`);
     } else {
       // Update existing user with Google info if not already set
       if (!user.googleId) {
         user.googleId = googleToken;
         user.avatar = picture || user.avatar;
         user.isVerified = true;
+        
+        // Upgrade to admin if email is in admin list
+        if (adminEmails.includes(normalizedEmail) && user.role !== 'admin') {
+          user.role = 'admin';
+          console.log(`🔑 Google auth: Upgraded ${normalizedEmail} to admin`);
+        }
+        
         await user.save();
       }
     }
@@ -837,9 +858,16 @@ router.post("/google", async (req, res) => {
     // Generate JWT token
     const token = generateToken(user._id);
 
+    const isAdmin = user.role === 'admin';
+    const message = isAdmin 
+      ? `Welcome Admin! Google authentication successful.`
+      : user.isModified() 
+        ? "Account linked with Google successfully" 
+        : "Login successful";
+
     res.json({
       success: true,
-      message: user.isModified() ? "Account linked with Google successfully" : "Login successful",
+      message: message,
       token,
       user: {
         id: user._id,

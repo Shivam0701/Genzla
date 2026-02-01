@@ -401,6 +401,7 @@ export default function AdminDashboard() {
                           <th>Customer</th>
                           <th>Product</th>
                           <th>Customization</th>
+                          <th>Reference Image</th>
                           <th>Status</th>
                           <th>Date</th>
                           <th>Actions</th>
@@ -429,6 +430,20 @@ export default function AdminDashboard() {
                             </td>
                             <td>{request.productType}</td>
                             <td>{request.customizationMethod}</td>
+                            <td>
+                              {request.referenceImage ? (
+                                <div className={styles.imagePreview}>
+                                  <img 
+                                    src={request.referenceImage} 
+                                    alt="Reference" 
+                                    className={styles.referenceImage}
+                                    onClick={() => window.open(request.referenceImage, '_blank')}
+                                  />
+                                </div>
+                              ) : (
+                                <span className={styles.noImage}>No image</span>
+                              )}
+                            </td>
                             <td>
                               <span
                                 className={`${styles.status} ${

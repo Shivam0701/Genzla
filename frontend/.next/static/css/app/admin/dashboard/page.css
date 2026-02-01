@@ -1364,3 +1364,31 @@
     flex-direction: column;
   }
 }
+/* Reference Image Styles */
+.admin-dashboard_imagePreview__vbnzZ {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-dashboard_referenceImage__oYoCZ {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-dashboard_referenceImage__oYoCZ:hover {
+  transform: scale(1.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(184, 155, 94, 0.3);
+}
+
+.admin-dashboard_noImage__qYYOC {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 12px;
+}

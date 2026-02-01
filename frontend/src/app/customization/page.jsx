@@ -29,7 +29,10 @@ const categories = [
   "T-shirt",
   "Jeans",
   "Bag",
-  "Shoes"
+  "Shoes",
+  "Hoodie",
+  "Shirt",
+  "Baggy Pants"
 ];
 
 export default function CustomizationPage() {

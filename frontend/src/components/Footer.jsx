@@ -16,7 +16,7 @@ export function Footer() {
           <div>
             <div className={styles.sectionLabel}>Social</div>
             <div className={styles.socialRow}>
-              <Link href="https://instagram.com" target="_blank">
+              <Link href="https://www.instagram.com/genzla.official/" target="_blank">
                 Instagram
               </Link>
               <Link href="https://wa.me" target="_blank">
